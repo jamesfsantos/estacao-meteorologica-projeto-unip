@@ -1,0 +1,19 @@
+[project]
+name = "api-estacao-meteorologica-mqtt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "James Santos", email = "jamesf.santos@hotmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+]
+
+[project.scripts]
+api-estacao-meteorologica-mqtt = "api_estacao_meteorologica_mqtt:main"
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
