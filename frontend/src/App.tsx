@@ -1,6 +1,7 @@
 import './App.css';
 import Card from './components/Card';
 import TemperaturaCard from './components/TemperaturaCard';
+import UmidadeCard from './components/UmidadeCard';
 
 export function App() {
   return (
@@ -9,36 +10,14 @@ export function App() {
       <div className=''>
         <div className='row border justify-content-between border-danger m-1'>
           <Card
-            titulo='Temperatura - Atual'
+            titulo='Temperatura'
           >
-            <TemperaturaCard temperatura={10} />
+            <TemperaturaCard temperatura={11} />
           </Card>
           <Card
-            titulo='Temperatura - Atual'
+            titulo='Umidade'
           >
-            <TemperaturaCard temperatura={10} />
-          </Card>
-          <Card
-            titulo='Temperatura - Atual'
-          >
-            <TemperaturaCard temperatura={10} />
-          </Card>
-        </div>
-        <div className='row border justify-content-between border-danger m-1'>
-          <Card
-            titulo='Temperatura - Atual'
-          >
-            <TemperaturaCard temperatura={10} />
-          </Card>
-          <Card
-            titulo='Temperatura - Atual'
-          >
-            <TemperaturaCard temperatura={10} />
-          </Card>
-          <Card
-            titulo='Temperatura - Atual'
-          >
-            <TemperaturaCard temperatura={10} />
+            <UmidadeCard umidade={10}/>
           </Card>
         </div>
       </div>
