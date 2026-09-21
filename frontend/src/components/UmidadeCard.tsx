@@ -9,7 +9,7 @@ export default function UmidadeCard({umidade}: Umidade){
     return <>
         <div className="alert" role="alert">
             <div className="text-center"><FontAwesomeIcon size="6x" icon={faHandHoldingDroplet} /></div>
-            <div className="text-center display-1">{umidade}%</div>
+            <div className="text-center display-1">{umidade}<span className='fs-1'>%</span></div>
         </div>
     </>
 }

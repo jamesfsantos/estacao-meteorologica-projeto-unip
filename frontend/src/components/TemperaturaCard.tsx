@@ -22,7 +22,7 @@ export default function TemperaturaCard({temperatura}: Temperatura){
     return <>
         <div className="alert" role="alert">
             <div className="text-center"><FontAwesomeIcon className={corTermometro}  size="6x" icon={faTemperature0} /></div>
-            <div className="display-1 text-center">{temperatura}°C</div>
+            <div className="display-1 text-center">{temperatura}<span className='fs-1'>°C</span></div>
         </div>
     </>
 }
