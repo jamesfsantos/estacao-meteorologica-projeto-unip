@@ -2,8 +2,27 @@ from contextlib import asynccontextmanager
 import json
 from fastapi import FastAPI
 from pydantic import BaseModel
+from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 import paho.mqtt.client as mqtt
 
+# Configuração no banco de dados!
+connection_string = "mysql+mysqlconnector://root:root@127.0.0.1:3306/estacao_meteorologica_db"
+engine = create_engine(connection_string)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+#Criação da Tabela medidas
+class Medidas(Base):
+    __tablename__ = "medidas"
+    id = Column(Integer, primary_key=True, index=True)
+    temperatura = Column(String, nullable=True)
+    umidade = Column(String, nullable=True)
+    pressao = Column(String, nullable=True)
+    temperatura_bmp = Column(String, nullable=True)
+    luminosidade = Column(String, nullable=True)
+    gas = Column(String, nullable=True)
+    gas_digital = Column(String, nullable=True)
 
 class DadosTemperatura(BaseModel):
     temperatura: str = "0.0"
@@ -28,10 +47,24 @@ def on_message(client, userdata, msg):
     try:
         payload = msg.payload.decode("utf-8")
         dados_json = json.loads(payload)
-        
-        
         dados_estacao = DadosTemperatura.model_validate(dados_json)
+        
         print(f"Dados atualizados via MQTT: {dados_estacao}")
+        
+        with SessionLocal() as db:
+            medida = Medidas(
+                temperatura = dados_estacao.temperatura,
+                umidade = dados_estacao.umidade,
+                pressao = dados_estacao.pressao,
+                temperatura_bmp = dados_estacao.temperatura_bmp,
+                luminosidade = dados_estacao.luminosidade,
+                gas = dados_estacao.gas,
+                gas_digital = dados_estacao.gas_digital
+            )
+            
+            db.add(medida)
+            db.commit()
+            print("Salvo no Banco!")
     except Exception as e:
         print(f"Erro ao processar mensagem MQTT: {e}")
 
@@ -52,7 +85,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# 6. Endpoints
+
 @app.get("/")
 def read_root():
     return dados_estacao
