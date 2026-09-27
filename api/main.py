@@ -1,15 +1,17 @@
 from contextlib import asynccontextmanager
 import json
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, String, Integer,DateTime, create_engine, func
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 import paho.mqtt.client as mqtt
 
-# Configuração no banco de dados!
-connection_string = "mysql+mysqlconnector://root:root@127.0.0.1:3306/estacao_meteorologica_db"
-engine = create_engine(connection_string)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Configuração do Banco de Dados.
+connection_string = "mysql+mysqlconnector://root:root@127.0.0.1:3306/estacao_meteorologica_db" # Depois verificar para ganhar em uma variavel de Ambiente .env
+engine = create_engine(connection_string, connect_args={"init_command": "SET time_zone = 'America/Sao_Paulo'"})
+ContextoBanco = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 #Criação da Tabela medidas
@@ -23,6 +25,7 @@ class Medidas(Base):
     luminosidade = Column(String, nullable=True)
     gas = Column(String, nullable=True)
     gas_digital = Column(String, nullable=True)
+    data_cadastro = Column(DateTime, nullable=True, server_default=func.now()) #func é utilizado para chamar funções sql.
 
 class DadosTemperatura(BaseModel):
     temperatura: str = "0.0"
@@ -51,7 +54,7 @@ def on_message(client, userdata, msg):
         
         print(f"Dados atualizados via MQTT: {dados_estacao}")
         
-        with SessionLocal() as db:
+        with ContextoBanco() as db:
             medida = Medidas(
                 temperatura = dados_estacao.temperatura,
                 umidade = dados_estacao.umidade,
@@ -59,11 +62,13 @@ def on_message(client, userdata, msg):
                 temperatura_bmp = dados_estacao.temperatura_bmp,
                 luminosidade = dados_estacao.luminosidade,
                 gas = dados_estacao.gas,
-                gas_digital = dados_estacao.gas_digital
-            )
+                gas_digital = dados_estacao.gas_digital,
+                data_cadastro = func.now()
+            ) # Sem a necessidade de chamar aqui, pois quando o objeto é montado, ele já atribui um valor a propriedade data_cadastro
             
             db.add(medida)
             db.commit()
+            
             print("Salvo no Banco!")
     except Exception as e:
         print(f"Erro ao processar mensagem MQTT: {e}")
@@ -85,7 +90,26 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+#Liberar CORS...
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/")
-def read_root():
-    return dados_estacao
+# @app.get("/")
+# def read_root():
+#     return dados_estacao
+
+@app.get("/obter-ultimo")
+def obterUltimaAtualizacao():
+    ## Obtendo ultimo registro
+    with ContextoBanco() as db:
+        medida = db.query(Medidas).order_by(Medidas.id.desc()).first()
+        medida.data_cadastro = str(medida.data_cadastro)
+    
+    
+    
+    return medida

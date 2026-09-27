@@ -1,0 +1,1 @@
+Rodar o projeto: uvicorn main:app --reload
