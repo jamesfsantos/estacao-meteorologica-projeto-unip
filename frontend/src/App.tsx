@@ -44,7 +44,7 @@ export function App() {
 	}, [])
 
 	return (
-		<main className="container border vh-100">
+		<main className="container vh-100">
 			<h1 className="text-center">Estação Meteorológica</h1><br/>
 			{medida && (<h3 className='text-center'>Ultima Atualização: {formatarData(medida.data_cadastro)}</h3>)}
 			{erro && (
@@ -54,30 +54,40 @@ export function App() {
 			}
 
 			<div className=''>
-				<div className='row border justify-content-between m-1'>
+					<div className='row'>
+					<div className='col-sm-12 col-md-4 '>
 					<Card
 						titulo='Temperatura'
 					>
 						<TemperaturaCard temperatura={medida ? Number(medida.temperatura) : 0} />
 					</Card>
+					</div>
+					<div className='col-sm-12 col-md-4 '>
 					<Card
 						titulo='Umidade'
 					>
 						<UmidadeCard umidade={medida ? Number(medida.umidade) : 0} />
 					</Card>
+					</div>
+					<div className='col-sm-12 col-md-4'>
 					<Card
 						titulo="Gás - Qualidade do Ar"
 					>
 						<GasCard aqi={medida ? Number(medida.gas) : 0} />
 					</Card>
-				</div>
-				<div className='row border justify-content-around m-1'>
+					</div>
+					</div>
+				<div className='row'>
+					<div className='col-sm-12 col-md-6'>
 					<Card titulo='Luminosidade'>
 						<LuminosidadeCard lux={medida ? Number(medida.luminosidade) : 0} />
 					</Card>
+					</div>
+					<div className='col-sm-12 col-md-6'>
 					<Card titulo='Pressão'>
 						<PressaoCard hpa={medida ? Number(medida.pressao) : 0} />
 					</Card>
+					</div>
 				</div>
 			</div>
 		</main>
