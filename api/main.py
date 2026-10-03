@@ -52,7 +52,7 @@ def on_message(client, userdata, msg):
         dados_json = json.loads(payload)
         dados_estacao = DadosTemperatura.model_validate(dados_json)
         
-        print(f"Dados atualizados via MQTT: {dados_estacao}")
+        print(f"Mensagem pega no Broker MQTT. Dados atualizados via MQTT: {dados_estacao}")
         
         with ContextoBanco() as db:
             medida = Medidas(
@@ -109,7 +109,6 @@ def obterUltimaAtualizacao():
     with ContextoBanco() as db:
         medida = db.query(Medidas).order_by(Medidas.id.desc()).first()
         medida.data_cadastro = str(medida.data_cadastro)
-    
-    
+        print(f"Obtido: {medida}")
     
     return medida
