@@ -7,15 +7,17 @@ RUN echo "Instalando depêndencias do Node"
 RUN npm install
 
 COPY . .
+
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
 RUN echo "Iniciando Build........."
 RUN npm run build
 
-# Estágio 2: Servir com Nginx
 FROM nginx:alpine
-# Copia o build do React para a pasta estática do Nginx
+
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copia arquivo de configuração customizado do Nginx para suportar rotas de SPA
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

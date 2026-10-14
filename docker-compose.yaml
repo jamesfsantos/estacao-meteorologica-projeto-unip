@@ -8,6 +8,8 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://api.coredevelopement.top
     container_name: fastapi_api
     restart: always
     ports:
