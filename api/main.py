@@ -6,10 +6,11 @@ from pydantic import BaseModel
 from sqlalchemy import Column, String, Integer,DateTime, create_engine, func
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 import paho.mqtt.client as mqtt
+import os
 
 
 # Configuração do Banco de Dados.
-connection_string = "mysql+mysqlconnector://root:root@127.0.0.1:3306/estacao_meteorologica_db" # Depois verificar para ganhar em uma variavel de Ambiente .env
+connection_string = os.getenv('CONNECTION_STRING')
 engine = create_engine(connection_string, connect_args={"init_command": "SET time_zone = 'America/Sao_Paulo'"})
 ContextoBanco = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -93,7 +94,7 @@ app = FastAPI(lifespan=lifespan)
 #Liberar CORS...
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
