@@ -94,7 +94,7 @@ app = FastAPI(lifespan=lifespan)
 #Liberar CORS...
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "https://dashboard.coredevelopement.top"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
