@@ -6,16 +6,18 @@ services:
     extra_hosts:
         - "host.docker.internal:host-gateway"
     build:
-      context: ./api      # Caminho para a pasta do código da API
+      context: ./api
       dockerfile: Dockerfile
     container_name: fastapi_api
     restart: always
     ports:
-      - "8080:8080"           # Mapeia http://localhost:8080 na sua máquina
+      - "8080:8080"
     environment:
       - PORT=8080
     networks:
       - app-network
+    env_file:
+        ./api/.env
 
   # 2. Frontend: Dashboard React (servido via Nginx)
   dashboard:
@@ -25,7 +27,7 @@ services:
     container_name: react_dashboard
     restart: always
     ports:
-      - "3000:80"             # Mapeia http://localhost:3000 na sua máquina
+      - "3000:80"
     depends_on:
       - api
     networks:
