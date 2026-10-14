@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # 1. Backend: API FastAPI
+  api:
+    extra_hosts:
+        - "host.docker.internal:host-gateway"
+    build:
+      context: ./api      # Caminho para a pasta do código da API
+      dockerfile: Dockerfile
+    container_name: fastapi_api
+    restart: always
+    ports:
+      - "8080:8080"           # Mapeia http://localhost:8080 na sua máquina
+    environment:
+      - PORT=8080
+    networks:
+      - app-network
+
+  # 2. Frontend: Dashboard React (servido via Nginx)
+  dashboard:
+    build:
+      context: ./frontend     # Caminho para a pasta do código do React
+      dockerfile: Dockerfile
+    container_name: react_dashboard
+    restart: always
+    ports:
+      - "3000:80"             # Mapeia http://localhost:3000 na sua máquina
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
