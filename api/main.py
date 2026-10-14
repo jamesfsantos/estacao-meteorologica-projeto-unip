@@ -100,9 +100,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# @app.get("/")
-# def read_root():
-#     return dados_estacao
 
 @app.get("/obter-ultimo")
 def obterUltimaAtualizacao():
