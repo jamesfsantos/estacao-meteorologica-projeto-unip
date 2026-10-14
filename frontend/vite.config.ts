@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  server: {
+    allowedHosts: [
+      'panning-guidable-query.ngrok-free.dev',
+    ],
+    port: 3000
+  }
 })

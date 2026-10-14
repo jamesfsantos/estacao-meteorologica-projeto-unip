@@ -1,13 +1,10 @@
-import { useState } from "react";
-
 interface CardProps {
     titulo: string;
     children: React.ReactNode
 }
 
 export default function Card({titulo, children}: CardProps){
-    const [contador, setContador] = useState(0);
-
+    
     
     return <>
         <div className="card col m-1">

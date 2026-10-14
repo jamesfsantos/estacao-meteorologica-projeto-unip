@@ -1,6 +1,5 @@
 import { faTemperature0 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useState } from "react";
 
 interface Temperatura {
     temperatura: number
