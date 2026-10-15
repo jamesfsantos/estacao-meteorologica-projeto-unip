@@ -8,8 +8,6 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-      args:
-        - VITE_API_URL=https://api.coredevelopement.top
     container_name: fastapi_api
     restart: always
     ports:
@@ -26,6 +24,8 @@ services:
     build:
       context: ./frontend     # Caminho para a pasta do código do React
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://api.coredevelopement.top
     container_name: react_dashboard
     restart: always
     ports:
