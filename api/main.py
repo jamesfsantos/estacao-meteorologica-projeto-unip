@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import ALLOWED_ORIGINS,MQTT_BROKER,MQTT_PORT
 from app.database.connection import ContextoBanco
-from app.database.models import Medidas
+from app.database.models import Medidas, Localizacao
 from app.services.mqtt import setup_mqtt
 
 
@@ -32,6 +32,17 @@ app.add_middleware(
 def obter_ultima_atualizacao():
     with ContextoBanco() as db:
         medida = db.query(Medidas).order_by(Medidas.id.desc()).first()
+        localizacao = db.query(Localizacao).where(medida.id_localizacao == Localizacao.id).first()
+        
+        dados = {
+            "localizacao": {
+                "lat": localizacao.latitude,
+                "long": localizacao.longitude,
+                "precisao": localizacao.precisao
+            },
+            "medidas": medida
+        }
         if not medida:
             raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
-        return medida
+        
+        return dados

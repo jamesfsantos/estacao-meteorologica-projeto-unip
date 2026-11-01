@@ -1,4 +1,4 @@
-from core.config import CONNECTION_STRING
+from app.core.config import CONNECTION_STRING
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
