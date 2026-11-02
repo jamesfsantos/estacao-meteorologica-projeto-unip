@@ -14,10 +14,12 @@
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
     "@popperjs/core": "^2.11.8",
+    "@recharts/devtools": "^0.0.19",
     "axios": "^1.20.0",
     "bootstrap": "^5.3.8",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "recharts": "^3.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
