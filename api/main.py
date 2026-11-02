@@ -28,21 +28,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/obter-ultimo")
 def obter_ultima_atualizacao():
     with ContextoBanco() as db:
-        medida = db.query(Medidas).order_by(Medidas.id.desc()).first()
-        localizacao = db.query(Localizacao).where(medida.id_localizacao == Localizacao.id).first()
-        
+        medida = db.query(Medidas).order_by(
+            Medidas.id.desc()
+        ).first()
+
+        if not medida:
+            raise HTTPException(
+                status_code=404,
+                detail="Nenhum registro encontrado"
+            )
+
+        localizacao = medida.localizacao
+
         dados = {
             "localizacao": {
                 "lat": localizacao.latitude,
                 "long": localizacao.longitude,
-                "precisao": localizacao.precisao
+                "precisao": localizacao.precisao 
             },
-            "medidas": medida
+            "medidas": {
+                "id": medida.id,
+                "umidade": medida.umidade,
+                "temperatura_bmp": medida.temperatura_bmp,
+                "gas": medida.gas,
+                "data_cadastro": medida.data_cadastro,
+                "pressao": medida.pressao,
+                "temperatura": medida.temperatura,
+                "luminosidade": medida.luminosidade,
+                "gas_digital": medida.gas_digital,
+                "id_localizacao": medida.id_localizacao
+            }
         }
-        if not medida:
-            raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
-        
+
         return dados
