@@ -1,7 +1,9 @@
 'use client';
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
-const dadosMeteorologicos = [
+
+const dadosMeteorologicos = 
+[
   {
     horario: '13:00',
     temperatura: 26,
@@ -50,7 +52,7 @@ const dadosMeteorologicos = [
     luminosidade:60,
     pressao:90,
   },
-];
+]
 
 export default function GraficoChart(){
   return(

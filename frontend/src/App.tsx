@@ -32,7 +32,7 @@ export function App() {
 	// 	try {
 	// 		const request = await api.get("obter-ultimo");
 	// 		const response = request.data as Medidas;
-
+			
 	// 		setMedida(response)
 	// 	}
 	// 	catch (error: any) {
@@ -99,11 +99,14 @@ export function App() {
 				</div>
 				<div className='row'>
 					<div className='col-12'>
+						<div className="card p-3 shadow-sm">
+      						<h4 className="mb-3">Histórico de Medições em Tempo Real</h4>
 						<GraficoChart />
 					</div>
 				</div>
-			</div>
-		</main>
+			 </div>
+		  </div>
+	  </main>
 	);
 }
 
