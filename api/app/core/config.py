@@ -13,5 +13,6 @@ MQTT_TOPIC = "projeto-unip/estacao-meteorologica/temperatura"
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
+    "http://localhost:3001",
     "https://dashboard.coredevelopement.top",
 ]
