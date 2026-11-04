@@ -8,6 +8,9 @@ import UmidadeCard from './components/UmidadeCard';
 import api from './api/api';
 import { useEffect, useState } from 'react';
 import { formatarData } from './utils/utils';
+import GraficoChart from './components/GraficoChart';
+
+
 
 interface Medidas {
 	pressao: string;
@@ -25,23 +28,23 @@ export function App() {
 	const [medida, setMedida] = useState<Medidas | null>(null)
 
 	//Criar a requisição...
-	const obterMedidas = async () => {
-		try {
-			const request = await api.get("obter-ultimo");
-			const response = request.data as Medidas;
+	// const obterMedidas = async () => {
+	// 	try {
+	// 		const request = await api.get("obter-ultimo");
+	// 		const response = request.data as Medidas;
+			
+	// 		setMedida(response)
+	// 	}
+	// 	catch (error: any) {
+	// 		console.error(error);
+	// 		setErro(error.response?.data);
+	// 	}
+	// }
 
-			setMedida(response)
-		}
-		catch (error: any) {
-			console.error(error);
-			setErro(error.response?.data);
-		}
-	}
 
-
-	useEffect(() => {
-		obterMedidas()
-	}, [])
+	// useEffect(() => {
+	// 	obterMedidas()
+	// }, [])
 
 	return (
 		<main className="container vh-100">
@@ -59,40 +62,54 @@ export function App() {
 					<Card
 						titulo='Temperatura'
 					>
-						<TemperaturaCard temperatura={medida ? Number(medida.temperatura) : 0} />
+						{/* <TemperaturaCard temperatura={medida ? Number(medida.temperatura) : 0} /> */}
+						<TemperaturaCard temperatura={0} />
 					</Card>
 					</div>
 					<div className='col-sm-12 col-md-4 '>
 					<Card
 						titulo='Umidade'
 					>
-						<UmidadeCard umidade={medida ? Number(medida.umidade) : 0} />
+						{/* <UmidadeCard umidade={medida ? Number(medida.umidade) : 0} /> */}
+						<UmidadeCard umidade={0} />
 					</Card>
 					</div>
 					<div className='col-sm-12 col-md-4'>
 					<Card
 						titulo="Gás - Qualidade do Ar"
 					>
-						<GasCard aqi={medida ? Number(medida.gas) : 0} />
+						{/* <GasCard aqi={medida ? Number(medida.gas) : 0} /> */}
+						<GasCard aqi={0} />
 					</Card>
 					</div>
 					</div>
 				<div className='row'>
 					<div className='col-sm-12 col-md-6'>
 					<Card titulo='Luminosidade'>
-						<LuminosidadeCard lux={medida ? Number(medida.luminosidade) : 0} />
+						{/* <LuminosidadeCard lux={medida ? Number(medida.luminosidade) : 0} /> */}
+						<LuminosidadeCard lux={0} />
 					</Card>
 					</div>
 					<div className='col-sm-12 col-md-6'>
 					<Card titulo='Pressão'>
-						<PressaoCard hpa={medida ? Number(medida.pressao) : 0} />
+						{/* <PressaoCard hpa={medida ? Number(medida.pressao) : 0} /> */}
+						<PressaoCard hpa={0} />
 					</Card>
 					</div>
 				</div>
-			</div>
-		</main>
+				<div className='row'>
+					<div className='col-12'>
+						<div className="card p-3 shadow-sm">
+      						<h4 className="mb-3">Histórico de Medições em Tempo Real</h4>
+						<GraficoChart />
+					</div>
+				</div>
+			 </div>
+		  </div>
+	  </main>
 	);
 }
+
 
 
 
