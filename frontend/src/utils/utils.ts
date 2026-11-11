@@ -1,8 +1,13 @@
 export function formatarData(data: string): string {
-    const [ano, mes, resto] = data.split("-");
+    if (!data) return "";
+
+    // Troca o 'T' por espaço caso ele exista na string
+    const dataFormatada = data.replace("T", " ");
+    
+    const [ano, mes, resto] = dataFormatada.split("-");
     const [dia, hora] = resto.split(" ");
 
-    return `${dia}/${mes}/${ano} ${hora}`;
+    return `${dia}/${mes}/${ano} às ${hora}`;
 }
 
 export function formatarDataFiltro(data: Date): string {

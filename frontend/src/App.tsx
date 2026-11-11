@@ -1,4 +1,3 @@
-
 import './App.css';
 import Card from './components/Card';
 import GasCard from './components/GasCard';
@@ -6,43 +5,58 @@ import LuminosidadeCard from './components/LuminosidadeCard';
 import PressaoCard from './components/PressaoCard';
 import TemperaturaCard from './components/TemperaturaCard';
 import UmidadeCard from './components/UmidadeCard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatarData } from './utils/utils';
 import GraficoChart from './components/GraficoChart';
+import MapaEstacao from './components/MapaEstacao';
+import api from './api/api';
 
-interface Medidas {
-    pressao: string;
-    temperatura: string;
-    umidade: string;
-    temperatura_bmp: string;
-    luminosidade: string;
-    gas: string;
-    gas_digital: string;
+
+interface LocalizacaoData {
+    lat: number;
+    long: number;
+    precisao: number;
+}
+
+interface MedidaData {
+    id: number;
+    umidade: number;
+    temperatura_bmp: number;
+    gas: number;
     data_cadastro: string;
+    pressao: number;
+    temperatura: number;
+    luminosidade: number;
+    gas_digital: number;
+    id_localizacao: number;
+}
+
+interface ResponseMedidas {
+    localizacao: LocalizacaoData;
+    medidas: MedidaData;
 }
 
 export function App() {
     const [erro, setErro] = useState("");
-    const [medida, setMedida] = useState<Medidas | null>(null);
-    const [abaAtiva, setAbaAtiva] = useState<'medicoes' | 'graficos'>('medicoes');
+    const [dadosEstacao, setDadosEstacao] = useState<ResponseMedidas | null>(null);
+    const [abaAtiva, setAbaAtiva] = useState<'medicoes' | 'graficos' | 'mapa'>('medicoes');
 
-    //Criar a requisição...
-    // const obterMedidas = async () => {
-    //     try {
-    //         const request = await api.get("obter-ultimo");
-    //         const response = request.data as Medidas;
-    //
-    //         setMedida(response);
-    //     }
-    //     catch (error: any) {
-    //         console.error(error);
-    //         setErro(error.response?.data);
-    //     }
-    // }
+    const obterMedidas = async () => {
+        try {
+            const request = await api.get("obter-ultimo");
+            const response = request.data as ResponseMedidas;
+            setDadosEstacao(response);
+        } catch (error: any) {
+            console.error(error);
+            setErro(error.response?.data || "Erro ao carregar dados da estação.");
+        }
+    };
 
-    // useEffect(() => {
-    //     obterMedidas();
-    // }, []);
+    useEffect(() => {
+        obterMedidas();
+    }, []);
+
+    const { medidas, localizacao } = dadosEstacao || {};
 
     return (
         <main className="container py-2">
@@ -50,9 +64,9 @@ export function App() {
                 Estação Meteorológica
             </h1>
 
-            {medida && (
-                <h3 className="text-center mb-3">
-                    Última Atualização: {formatarData(medida.data_cadastro)}
+            {medidas?.data_cadastro && (
+                <h3 className="text-center mb-3 fs-6 text-muted">
+                    Última Atualização: {formatarData(medidas.data_cadastro)}
                 </h3>
             )}
 
@@ -81,11 +95,19 @@ export function App() {
                     <i className="fa fa-chart-line me-2"></i>
                     Histórico
                 </button>
+
+                <button
+                    type="button"
+                    className={`nav-link ${abaAtiva === 'mapa' ? 'active' : ''}`}
+                    onClick={() => setAbaAtiva('mapa')}
+                >
+                    <i className="fa fa-map-marker-alt me-2"></i>
+                    Mapa
+                </button>
             </div>
 
             {/* Primeira linha: Temperatura, Umidade e Gás */}
             <div className={`row g-2 mb-2 ${abaAtiva === 'medicoes' ? 'd-flex' : 'd-none'} d-md-flex`}>
-
                 <div className="col-12 col-md-4">
                     <Card
                         titulo="Temperatura"
@@ -95,22 +117,17 @@ export function App() {
                                     A temperatura ambiente é medida pelo sensor
                                     <strong> DHT22</strong> e apresentada em graus Celsius (°C).
                                 </p>
-
                                 <h6>Como funciona a medição?</h6>
-
                                 <p>
                                     O DHT22 utiliza um sensor interno para medir a temperatura
                                     do ambiente e transmite os dados ao ESP32.
                                 </p>
-
                                 <h6>Sobre os valores</h6>
-
                                 <ul>
                                     <li><strong>Baixa:</strong> temperatura abaixo da faixa de referência.</li>
                                     <li><strong>Agradável:</strong> temperatura dentro da faixa de referência.</li>
                                     <li><strong>Elevada:</strong> temperatura acima da faixa de referência.</li>
                                 </ul>
-
                                 <div className="alert alert-info mb-0">
                                     Os valores apresentados representam a temperatura detectada
                                     no local onde a estação está instalada.
@@ -118,8 +135,7 @@ export function App() {
                             </>
                         }
                     >
-                        {/* <TemperaturaCard temperatura={medida ? Number(medida.temperatura) : 0} /> */}
-                        <TemperaturaCard temperatura={0} />
+                        <TemperaturaCard temperatura={medidas ? Number(medidas.temperatura) : 0} />
                     </Card>
                 </div>
 
@@ -132,23 +148,18 @@ export function App() {
                                     A umidade relativa do ar é medida pelo sensor
                                     <strong> DHT22</strong> e apresentada em porcentagem (%).
                                 </p>
-
                                 <h6>O que é umidade relativa?</h6>
-
                                 <p>
                                     Representa a quantidade de vapor de água presente no ar
                                     em relação à quantidade máxima que ele pode conter
                                     naquela temperatura.
                                 </p>
-
                                 <h6>Sobre os valores</h6>
-
                                 <ul>
                                     <li><strong>Abaixo de 30%:</strong> umidade baixa.</li>
                                     <li><strong>De 30% a 60%:</strong> umidade adequada.</li>
                                     <li><strong>Acima de 60%:</strong> umidade elevada.</li>
                                 </ul>
-
                                 <div className="alert alert-info mb-0">
                                     As faixas são referências simplificadas para interpretação
                                     da umidade relativa do ar em ambientes internos.
@@ -156,8 +167,7 @@ export function App() {
                             </>
                         }
                     >
-                        {/* <UmidadeCard umidade={medida ? Number(medida.umidade) : 0} /> */}
-                        <UmidadeCard umidade={0} />
+                        <UmidadeCard umidade={medidas ? Number(medidas.umidade) : 0} />
                     </Card>
                 </div>
 
@@ -170,24 +180,19 @@ export function App() {
                                     O <strong>MQ-135</strong> é um sensor utilizado para detectar
                                     variações na presença de determinados gases no ambiente.
                                 </p>
-
                                 <h6>Como funciona a medição?</h6>
-
                                 <p>
                                     O ESP32 recebe um sinal analógico do sensor e converte
                                     essa leitura em um valor digital (ADC), que varia de
                                     <strong> 0 a 4095</strong>.
                                 </p>
-
                                 <h6>Limitações do sensor</h6>
-
                                 <ul>
                                     <li>Não fornece diretamente o Índice de Qualidade do Ar (AQI).</li>
                                     <li>Não identifica individualmente todos os gases.</li>
                                     <li>Sua resposta pode sofrer influência da temperatura e umidade.</li>
                                     <li>Necessita de calibração para uma interpretação mais precisa.</li>
                                 </ul>
-
                                 <div className="alert alert-warning mb-0">
                                     <strong>Atenção:</strong> a leitura é experimental e representa
                                     a resposta elétrica do sensor. Não deve ser utilizada para
@@ -196,16 +201,14 @@ export function App() {
                             </>
                         }
                     >
-                        {/* <GasCard adc={medida ? Number(medida.gas) : 0} /> */}
-                        <GasCard adc={0} />
+                        <GasCard adc={medidas ? Number(medidas.gas) : 0} />
                     </Card>
                 </div>
             </div>
 
-            {/* Segunda linha: Luminosidade e Pressão */}
-            <div className={`row g-2 mb-2 ${abaAtiva === 'medicoes' ? 'd-flex' : 'd-none'} d-md-flex`}>
-
-                <div className="col-12 col-md-6">
+            {/* Segunda linha: Luminosidade, Pressão e Mapa */}
+            <div className={`row g-2 mb-2 ${abaAtiva === 'graficos' ? 'd-none' : 'd-flex'} d-md-flex`}>
+                <div className={`col-12 col-md-4 ${abaAtiva === 'medicoes' ? 'd-block' : 'd-none'} d-md-block`}>
                     <Card
                         titulo="Luminosidade"
                         explicacao={
@@ -215,23 +218,18 @@ export function App() {
                                     componente cuja resistência elétrica varia conforme
                                     a quantidade de luz recebida.
                                 </p>
-
                                 <h6>Como funciona a medição?</h6>
-
                                 <p>
                                     O ESP32 realiza a leitura analógica do circuito e converte
                                     o sinal em um valor digital (ADC), entre
                                     <strong> 0 e 4095</strong>.
                                 </p>
-
                                 <h6>Como interpretar os valores?</h6>
-
                                 <ul>
                                     <li><strong>ADC baixo:</strong> maior luminosidade.</li>
                                     <li><strong>ADC intermediário:</strong> luminosidade moderada.</li>
                                     <li><strong>ADC alto:</strong> menor luminosidade.</li>
                                 </ul>
-
                                 <div className="alert alert-info mb-0">
                                     No circuito utilizado, a leitura ADC aumenta quando a
                                     luminosidade diminui. O valor apresentado não representa
@@ -240,12 +238,11 @@ export function App() {
                             </>
                         }
                     >
-                        {/* <LuminosidadeCard lux={medida ? Number(medida.luminosidade) : 0} /> */}
-                        <LuminosidadeCard lux={0} />
+                        <LuminosidadeCard lux={medidas ? Number(medidas.luminosidade) : 0} />
                     </Card>
                 </div>
 
-                <div className="col-12 col-md-6">
+                <div className={`col-12 col-md-4 ${abaAtiva === 'medicoes' ? 'd-block' : 'd-none'} d-md-block`}>
                     <Card
                         titulo="Pressão"
                         explicacao={
@@ -255,23 +252,18 @@ export function App() {
                                     <strong> BMP280</strong>, responsável por detectar
                                     a pressão exercida pelo ar no ambiente.
                                 </p>
-
                                 <h6>Como funciona a medição?</h6>
-
                                 <p>
                                     O BMP280 utiliza um elemento sensor interno para medir
                                     a pressão atmosférica e transmite os dados ao ESP32
                                     por comunicação I2C.
                                 </p>
-
                                 <h6>Sobre os valores</h6>
-
                                 <ul>
                                     <li><strong>Pressão baixa:</strong> valor inferior à faixa de referência.</li>
                                     <li><strong>Pressão normal:</strong> valor próximo à faixa de referência.</li>
                                     <li><strong>Pressão elevada:</strong> valor superior à faixa de referência.</li>
                                 </ul>
-
                                 <div className="alert alert-info mb-0">
                                     A altitude influencia diretamente a pressão atmosférica.
                                     Por isso, a pressão medida localmente deve ser interpretada
@@ -280,8 +272,17 @@ export function App() {
                             </>
                         }
                     >
-                        {/* <PressaoCard hpa={medida ? Number(medida.pressao) : 0} /> */}
-                        <PressaoCard hpa={0} />
+                        <PressaoCard hpa={medidas ? Number(medidas.pressao) : 0} />
+                    </Card>
+                </div>
+
+                <div className={`col-12 col-md-4 ${abaAtiva === 'mapa' ? 'd-block' : 'd-none'} d-md-block`}>
+                    <Card titulo="Mapa" explicacao={<p>Visualize a localização da estação meteorológica no mapa.</p>}>
+                        <MapaEstacao
+                            lat={localizacao?.lat ?? 0}
+                            long={localizacao?.long ?? 0}
+                            precisao={localizacao?.precisao ?? 0}
+                        />
                     </Card>
                 </div>
             </div>
@@ -293,7 +294,6 @@ export function App() {
                         <h4 className="mb-3">
                             Histórico de Medições
                         </h4>
-
                         <GraficoChart />
                     </div>
                 </div>
