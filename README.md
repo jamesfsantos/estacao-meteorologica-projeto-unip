@@ -1,5 +1,9 @@
 ﻿# estacao-meteorologica-projeto-unip
 
+## Links:
+Video: https://youtu.be/o2qRYbaQTd0
+
+
 Nesse projeto estarão:
 - API em Python(FAST Api)
 
