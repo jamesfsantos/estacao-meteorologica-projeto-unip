@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 engine = create_engine(
     CONNECTION_STRING,
-    connect_args={"init_command": "SET time_zone = 'America/Sao_Paulo'"}
+    connect_args={"init_command": "SET time_zone = '-03:00'"}
 )
 
 ContextoBanco = sessionmaker(autocommit=False, autoflush=False, bind=engine)
