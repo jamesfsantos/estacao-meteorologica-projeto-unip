@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, Circle, useMap } from "react-leaflet";
-import L from "leaflet";
 
 // Coordenadas padrão de fallback (caso lat/long venham Zeradas)
 const POSICAO_DEFAULT: [number, number] = [-23.55052, -46.633308];
