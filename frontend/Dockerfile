@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN echo "Instalando depêndencias do Node"
 RUN npm install -g npm@12.2.2
+RUN npm install react@19 react-dom@19
 RUN npm install
 
 COPY . .
