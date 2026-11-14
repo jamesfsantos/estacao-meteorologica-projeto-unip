@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN echo "Instalando depêndencias do Node"
+RUN npm install -g npm@12.2.2
 RUN npm install
 
 COPY . .
@@ -12,7 +13,7 @@ ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
 
 RUN echo "Iniciando Build........."
-RUN npm install -g npm@12.2.2
+
 RUN npm run build
 
 FROM nginx:alpine
