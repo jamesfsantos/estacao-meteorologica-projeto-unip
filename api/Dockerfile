@@ -4,6 +4,7 @@ WORKDIR /app
 
 # Instala dependências do Python
 RUN echo "Instalando dependências do Python......"
+COPY .env .
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
