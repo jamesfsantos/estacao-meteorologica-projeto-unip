@@ -2,7 +2,7 @@
 
 ## Links:
 Video: https://youtu.be/o2qRYbaQTd0
-Drive do Video: https://drive.google.com/file/d/175WgyFaMRlYkPPVsxHuhYbpkFJrMyE60/view?usp=sharing
+Download do Video: https://drive.google.com/file/d/175WgyFaMRlYkPPVsxHuhYbpkFJrMyE60/view?usp=sharing
 
 
 Nesse projeto estarão:
